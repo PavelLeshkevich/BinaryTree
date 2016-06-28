@@ -18,7 +18,9 @@ public:
     Test(int count_element) {
 
         for (int it = 0; it < count_element; it++) {
-            nums.push_back(rand() % 100);
+            int rand_num = rand() % 100;
+            if(rand() % 2 == 0) rand_num *= -1;
+            nums.push_back(rand_num);
         }
         print(generate_tree(nums));
     }
@@ -55,10 +57,18 @@ public:
         }
         cout << endl << "------------" << endl;
         represent_tree(0, root, &tree);
+        int space = pow(2, tree.size());
         for (int i = 0; i < tree.size(); i++) {
             for (int j = 0; j < tree[i]->size(); j++) {
-                cout << tree[i]->at(j) << " ";
+                int tmp_space = space;
+                if(j > 0 && tmp_space == space) tmp_space += space;
+                for(int k = 0; k < tmp_space; k++) {
+                    cout << " ";
+                }
+
+                cout << tree[i]->at(j);
             }
+            space /= 2;
             cout << endl;
             tree[i]->clear();
         }
@@ -77,7 +87,7 @@ int main() {
     srand(time(NULL));
 
     for (int test = 0; test <= 5; test++) {
-        Test *new_test = new Test(rand() % 20 + 1);
+        Test *new_test = new Test(rand() % 14 + 1);
         delete new_test;
     }
 

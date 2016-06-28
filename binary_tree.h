@@ -10,6 +10,8 @@
 #include <vector>
 #include <algorithm>
 
+using namespace std;
+
 struct TreeNode {
 
     float value;
@@ -20,48 +22,58 @@ struct TreeNode {
 
 };
 
-void add_tree(TreeNode *cur_node, TreeNode *new_node) {
-    if (cur_node->value > new_node->value) {
-        if (cur_node->left == NULL) {
-            cur_node->left = new_node;
-            return;
-        }
-        else {
-            add_tree(cur_node->left, new_node);
-        }
+void build_tree(int left, int right, vector < float > *nums, TreeNode *cur_node, TreeNode *last_node, int deep) {
+    if(left < right) {
+
+        int middle = (right + left) / 2;
+
+        cur_node->value = (nums->at(middle) + nums->at(middle + 1)) / 2;
+
+        cur_node->left = new TreeNode;
+        cur_node->right = new TreeNode;
+
+        build_tree(left, middle, nums, cur_node->left, cur_node, deep - 1);
+        build_tree(middle + 1, right, nums, cur_node->right, cur_node, deep - 1);
     }
     else {
-        if (cur_node->right == NULL) {
-            cur_node->right = new_node;
-            return;
+        if(deep == 0) {
+            cur_node->value = nums->at(left);
+            cur_node->left = cur_node->right = NULL;
         }
         else {
-            add_tree(cur_node->right, new_node);
+            if (last_node->value < nums->at(left)) {
+                cur_node->value = last_node->value;
+                cur_node->value += (nums->at(left) - last_node->value) / (deep + 1);
+                cur_node->right = new TreeNode;
+                cur_node->left = NULL;
+                build_tree(left, right, nums, cur_node->right, cur_node, deep - 1);
+            }
+            else {
+                cur_node->value = last_node->value;
+                cur_node->value -= (last_node->value - nums->at(left)) / (deep + 1);
+                cur_node->left = new TreeNode;
+                cur_node->right = NULL;
+                build_tree(left, right, nums, cur_node->left, cur_node, deep - 1);
+            }
         }
     }
 }
 
-TreeNode *generate_tree(std::vector < float > nums) {
+TreeNode *generate_tree(vector < float > nums) {
 
-    random_shuffle(nums.begin(), nums.end());
+    int const_deep = 0, lg = 1;
+
+    while(lg < nums.size()) {
+        const_deep++;
+        lg *= 2;
+    }
+
+    sort(nums.begin(), nums.end());
 
     TreeNode *root = new TreeNode;
-    if (nums.size() > 0) {
 
-        root->left = root->right = NULL;
-        root->value = nums[0];
+    build_tree(0, nums.size() - 1, &nums, root, NULL, const_deep);
 
-        for (int i = 1; i < nums.size(); i++) {
+    return root;
 
-            TreeNode *new_node = new TreeNode;
-            new_node->left = new_node->right = NULL;
-            new_node->value = nums[i];
-
-            add_tree(root, new_node);
-        }
-        return root;
-    }
-    else {
-        return NULL;
-    }
 }
