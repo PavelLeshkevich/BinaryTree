@@ -61,6 +61,10 @@ void build_tree(int left, int right, vector < float > *nums, TreeNode *cur_node,
 
 TreeNode *generate_tree(vector < float > nums) {
 
+    if(nums.size() == 0) {
+        return NULL;
+    }
+
     int const_deep = 0, lg = 1;
 
     while(lg < nums.size()) {

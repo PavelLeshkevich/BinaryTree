@@ -51,6 +51,9 @@ public:
     }
 
     void print(TreeNode *root) {
+        if(root == NULL) {
+            return;
+        }
         cout << "------------" << endl;
         for (int it = 0; it < nums.size(); it++) {
             cout << nums[it] << " ";
@@ -87,7 +90,7 @@ int main() {
     srand(time(NULL));
 
     for (int test = 0; test <= 5; test++) {
-        Test *new_test = new Test(rand() % 14 + 1);
+        Test *new_test = new Test(rand() % 14);
         delete new_test;
     }
 
